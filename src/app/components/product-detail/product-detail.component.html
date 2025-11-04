@@ -1,0 +1,430 @@
+<!-- <div class="card mt-4 p-3 shadow-sm">
+      <h4>Product Details</h4>
+      <p>🆔 ID: {{ id }}</p>
+      <p>Name: {{product?.name}}</p>
+      <p>Price: {{product?.price}}</p>
+      <p>Category: {{product?.category}}</p>
+      <p>Image: <img [src]= "product?.image" alt="" height="200px" width="300px"></p>
+      <p>More info about product {{ id }} will go here...</p>
+</div> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9fafb;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .product-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 15px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .product-image {
+            height: 100%;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .product-image img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        
+        .product-details {
+            padding: 2rem;
+        }
+        
+        .product-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+        
+        .product-category {
+            display: inline-block;
+            background-color: #e9ecef;
+            color: var(--gray-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .product-id {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .product-description {
+            margin-bottom: 2rem;
+            color: #495057;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            flex: 1;
+        }
+        
+        .btn-primary-custom:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline-custom {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            flex: 1;
+        }
+        
+        .btn-outline-custom:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .product-features {
+            margin-top: 2rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-icon {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+        
+        .related-products {
+            margin-top: 4rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .related-product-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: var(--transition);
+            height: 100%;
+        }
+        
+        .related-product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .related-product-image {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background-color: #f8f9fa;
+        }
+        
+        .related-product-image img {
+            max-width: 100%;
+            max-height: 150px;
+            object-fit: contain;
+        }
+        
+        .related-product-info {
+            padding: 1rem;
+        }
+        
+        .related-product-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .related-product-price {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        
+        .rating {
+            color: #ffc107;
+            margin-bottom: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .product-image {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="product-container">
+        <div class="product-card">
+            <div class="row g-0">
+                <div class="col-md-6">
+                    <div class="product-image">
+                        <!-- Product image would be dynamically inserted here -->
+                        <img [src]="product?.image" alt="Product Image" id="product-image">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="product-details">
+                        <div class="product-id">🆔 ID: <span id="product-id">{{id}}</span></div>
+                        <h1 class="product-title" id="product-name">{{product?.name}}</h1>
+                        <div class="product-category" id="product-category">{{product?.category}}</div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="text-muted ms-1">(4.5)</span>
+                        </div>
+                        <div class="product-price" id="product-price">{{product?.price}}</div>
+                        <p class="product-description">
+                            Experience premium sound quality with our latest wireless headphones. 
+                            Featuring noise cancellation technology, 30-hour battery life, and 
+                            comfortable over-ear design for extended listening sessions.
+                        </p>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-primary-custom">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                            <button class="btn btn-outline-custom">
+                                <i class="far fa-heart me-2"></i>Add to Wishlist
+                            </button>
+                        </div>
+                        
+                        <div class="product-features">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <div>
+                                    <strong>Free Shipping</strong>
+                                    <p class="mb-0 text-muted">On orders over $50</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-undo"></i>
+                                </div>
+                                <div>
+                                    <strong>30-Day Return</strong>
+                                    <p class="mb-0 text-muted">Money-back guarantee</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div>
+                                    <strong>2-Year Warranty</strong>
+                                    <p class="mb-0 text-muted">Extended protection</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Products Section -->
+        <div class="related-products">
+            <h3 class="section-title">You May Also Like</h3>
+            <div class="row">
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="related-product-card">
+                        <div class="related-product-image">
+                            <img src="https://via.placeholder.com/200x150/3a0ca3/ffffff?text=Product" alt="Related Product">
+                        </div>
+                        <div class="related-product-info">
+                            <h5 class="related-product-title">Wireless Earbuds</h5>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <div class="related-product-price">$129.99</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="related-product-card">
+                        <div class="related-product-image">
+                            <img src="https://via.placeholder.com/200x150/f72585/ffffff?text=Product" alt="Related Product">
+                        </div>
+                        <div class="related-product-info">
+                            <h5 class="related-product-title">Bluetooth Speaker</h5>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="related-product-price">$89.99</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="related-product-card">
+                        <div class="related-product-image">
+                            <img src="https://via.placeholder.com/200x150/4cc9f0/ffffff?text=Product" alt="Related Product">
+                        </div>
+                        <div class="related-product-info">
+                            <h5 class="related-product-title">Smart Watch</h5>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <div class="related-product-price">$249.99</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="related-product-card">
+                        <div class="related-product-image">
+                            <img src="https://via.placeholder.com/200x150/7209b7/ffffff?text=Product" alt="Related Product">
+                        </div>
+                        <div class="related-product-info">
+                            <h5 class="related-product-title">Phone Case</h5>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="related-product-price">$24.99</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // This is where you would integrate with your Angular component
+        // For demonstration purposes, we'll simulate dynamic data
+        
+        // Simulated product data (would come from your component in a real app)
+        const productData = {
+            id: 12345,
+            name: "Premium Wireless Headphones",
+            price: "$199.99",
+            category: "Electronics",
+            image: "https://via.placeholder.com/500x400/4361ee/ffffff?text=Product+Image"
+        };
+        
+        // Update the UI with product data
+        document.getElementById('product-id').textContent = productData.id;
+        document.getElementById('product-name').textContent = productData.name;
+        document.getElementById('product-price').textContent = productData.price;
+        document.getElementById('product-category').textContent = productData.category;
+        document.getElementById('product-image').src = productData.image;
+    </script>
+</body>
+</html>

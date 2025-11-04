@@ -1,0 +1,169 @@
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center min-vh-100">
+      <div class="col-lg-6">
+        <div class="hero-content">
+          <span class="hero-badge">🚀 Welcome to Future Tech</span>
+          <h1 class="hero-title">
+            Build Amazing 
+            <span class="gradient-text">Digital Experiences</span> 
+            That Inspire
+          </h1>
+          <p class="hero-description">
+            We create stunning web applications with cutting-edge technologies. 
+            Our solutions are fast, modern, and user-friendly, designed to help 
+            your business thrive in the digital world.
+          </p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary me-3" (click)="scrollToFeatures()">
+              <i class="fas fa-rocket me-2"></i>
+              Get Started
+            </button>
+            <button class="btn btn-outline-light" (click)="scrollToDemo()">
+              <i class="fas fa-play-circle me-2"></i>
+              Watch Demo
+            </button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <h3>500+</h3>
+              <p>Projects Completed</p>
+            </div>
+            <div class="stat-item">
+              <h3>99%</h3>
+              <p>Client Satisfaction</p>
+            </div>
+            <div class="stat-item">
+              <h3>24/7</h3>
+              <p>Support Available</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-visual">
+          <div class="floating-card card-1">
+            <i class="fas fa-code"></i>
+            <h4>Clean Code</h4>
+          </div>
+          <div class="floating-card card-2">
+            <i class="fas fa-bolt"></i>
+            <h4>Fast Performance</h4>
+          </div>
+          <div class="floating-card card-3">
+            <i class="fas fa-mobile-alt"></i>
+            <h4>Responsive</h4>
+          </div>
+          <div class="main-visual">
+            <div class="visual-container">
+              <div class="animated-circle"></div>
+              <div class="animated-shape"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator" (click)="scrollToFeatures()">
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-subtitle">Why Choose Us</span>
+      <h2 class="section-title">Amazing Features</h2>
+      <p class="section-description">
+        Discover the powerful features that make our solutions stand out from the crowd
+      </p>
+    </div>
+    
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4" *ngFor="let feature of features">
+        <div class="feature-card">
+          <div class="feature-icon" [style.background]="feature.color">
+            <i [class]="feature.icon"></i>
+          </div>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+          <a href="#" class="feature-link">
+            Learn More <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Demo Section -->
+<section class="demo-section" id="demo">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <div class="demo-content">
+          <span class="section-subtitle">Live Preview</span>
+          <h2 class="section-title">See It In Action</h2>
+          <p class="demo-description">
+            Experience the power of our platform with this interactive demo. 
+            See how easy it is to create amazing digital experiences.
+          </p>
+          <ul class="demo-features">
+            <li><i class="fas fa-check-circle"></i> Real-time updates</li>
+            <li><i class="fas fa-check-circle"></i> Mobile responsive</li>
+            <li><i class="fas fa-check-circle"></i> Lightning fast</li>
+            <li><i class="fas fa-check-circle"></i> Easy to customize</li>
+          </ul>
+          <button class="btn btn-primary btn-lg">
+            <i class="fas fa-play me-2"></i>
+            Launch Demo
+          </button>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="demo-visual">
+          <div class="browser-mockup">
+            <div class="browser-header">
+              <div class="browser-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <div class="browser-content">
+              <div class="animated-demo">
+                <div class="demo-element demo-1"></div>
+                <div class="demo-element demo-2"></div>
+                <div class="demo-element demo-3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content text-center">
+      <h2>Ready to Get Started?</h2>
+      <p>Join thousands of satisfied customers and transform your digital presence today.</p>
+      <div class="cta-buttons">
+        <button class="btn btn-light btn-lg me-3">
+          <i class="fas fa-calendar me-2"></i>
+          Schedule Demo
+        </button>
+        <button class="btn btn-outline-light btn-lg">
+          <i class="fas fa-phone me-2"></i>
+          Contact Sales
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

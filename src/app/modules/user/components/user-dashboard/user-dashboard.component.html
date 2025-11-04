@@ -1,0 +1,361 @@
+
+<!-- User Dashboard Content -->
+<div class="user-dashboard-container">
+  <!-- Dashboard Header -->
+  <section class="dashboard-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Dashboard</h1>
+          <p>Welcome to your personal dashboard. Here's an overview of your activity and progress.</p>
+        </div>
+        <div class="header-actions">
+          <div class="date-filter">
+            <select class="form-select" [(ngModel)]="selectedPeriod" (change)="onPeriodChange()">
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last 30 Days</option>
+              <option value="90d">Last 90 Days</option>
+              <option value="1y">Last Year</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" (click)="exportData()">
+            <i class="fas fa-download me-2"></i>
+            Export Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Metrics Section -->
+  <section class="metrics-section">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-xl-3 col-md-6" *ngFor="let metric of keyMetrics">
+          <div class="metric-card" [class.highlight]="metric.highlight">
+            <div class="metric-header">
+              <div class="metric-icon" [style.background]="metric.color">
+                <i [class]="metric.icon"></i>
+              </div>
+              <div class="metric-trend" [class.positive]="metric.trend > 0" 
+                   [class.negative]="metric.trend < 0">
+                <i class="fas" [class.fa-arrow-up]="metric.trend > 0" 
+                   [class.fa-arrow-down]="metric.trend < 0"></i>
+                {{Math.abs(metric.trend)}}%
+              </div>
+            </div>
+            <div class="metric-content">
+              <h3>{{metric.value}}</h3>
+              <p>{{metric.title}}</p>
+              <div class="metric-comparison">
+                vs previous period: 
+                <span [class.text-success]="metric.trend > 0" 
+                      [class.text-danger]="metric.trend < 0">
+                  {{metric.trend > 0 ? '+' : ''}}{{metric.trend}}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts Section -->
+  <section class="charts-section">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Activity Chart -->
+        <div class="col-lg-8">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Activity Overview</h3>
+              <div class="chart-legend">
+                <div class="legend-item" *ngFor="let item of activityChart.legend">
+                  <span class="legend-color" [style.background]="item.color"></span>
+                  {{item.label}}
+                </div>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="activityChart">{{ activityChart }}</canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Chart -->
+        <div class="col-lg-4">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Goal Progress</h3>
+            </div>
+            <div class="progress-chart">
+              <div class="progress-circle">
+                <div class="circle-bg"></div>
+                <div class="circle-progress" [style.transform]="'rotate(' + (goalProgress * 3.6) + 'deg)'"></div>
+                <div class="progress-text">
+                  <span>{{goalProgress}}%</span>
+                  <small>Monthly Goal</small>
+                </div>
+              </div>
+              <div class="progress-stats">
+                <div class="progress-stat">
+                  <span class="stat-value">{{completedTasks}}</span>
+                  <span class="stat-label">Completed</span>
+                </div>
+                <div class="progress-stat">
+                  <span class="stat-value">{{remainingTasks}}</span>
+                  <span class="stat-label">Remaining</span>
+                </div>
+                <div class="progress-stat">
+                  <span class="stat-value">{{totalTasks}}</span>
+                  <span class="stat-label">Total</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Charts Row -->
+      <div class="row g-4 mt-4">
+        <!-- Performance Chart -->
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Performance Metrics</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="performanceChart">{{ performanceChart }}</canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Distribution Chart -->
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Activity Distribution</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="distributionChart">{{ distributionChart }}</canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Activity & Quick Stats -->
+  <section class="activity-stats-section">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Recent Activity -->
+        <div class="col-lg-8">
+          <div class="activity-card">
+            <div class="card-header">
+              <h3>Recent Activity</h3>
+              <a href="#" class="view-all">View All Activity</a>
+            </div>
+            <div class="activity-timeline">
+              <div class="timeline-item" *ngFor="let activity of recentActivity">
+                <div class="timeline-marker" [style.background]="activity.color">
+                  <i [class]="activity.icon"></i>
+                </div>
+                <div class="timeline-content">
+                  <div class="activity-main">
+                    <p class="activity-text">{{activity.text}}</p>
+                    <span class="activity-time">{{activity.time}}</span>
+                  </div>
+                  <div class="activity-meta" *ngIf="activity.details">
+                    <span class="activity-details">{{activity.details}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="col-lg-4">
+          <div class="stats-sidebar">
+            <!-- Achievement Stats -->
+            <div class="stats-card">
+              <div class="stats-header">
+                <h4>Achievements</h4>
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div class="stats-content">
+                <div class="stat-item">
+                  <span class="stat-label">Total Earned</span>
+                  <span class="stat-value">{{achievementStats.total}}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">This Month</span>
+                  <span class="stat-value">{{achievementStats.thisMonth}}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">In Progress</span>
+                  <span class="stat-value">{{achievementStats.inProgress}}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Streak Stats -->
+            <div class="stats-card">
+              <div class="stats-header">
+                <h4>Current Streak</h4>
+                <i class="fas fa-fire"></i>
+              </div>
+              <div class="streak-display">
+                <div class="streak-count">
+                  <span class="streak-number">{{streakStats.current}}</span>
+                  <span class="streak-label">days</span>
+                </div>
+                <div class="streak-info">
+                  <p>Keep going! Your longest streak is {{streakStats.longest}} days.</p>
+                  <div class="streak-progress">
+                    <div class="progress-bar">
+                      <div class="progress-fill" [style.width]="(streakStats.current / streakStats.longest) * 100 + '%'"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="stats-card">
+              <div class="stats-header">
+                <h4>Quick Actions</h4>
+                <i class="fas fa-bolt"></i>
+              </div>
+              <div class="quick-actions">
+                <button class="btn-action" (click)="addNewTask()">
+                  <i class="fas fa-plus"></i>
+                  Add Task
+                </button>
+                <button class="btn-action" (click)="generateReport()">
+                  <i class="fas fa-chart-bar"></i>
+                  Generate Report
+                </button>
+                <button class="btn-action" (click)="shareProgress()">
+                  <i class="fas fa-share"></i>
+                  Share Progress
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Goals Section -->
+  <section class="goals-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Your Goals</h2>
+        <p>Track your progress towards achieving your objectives</p>
+      </div>
+      
+      <div class="goals-grid">
+        <div class="goal-card" *ngFor="let goal of goals">
+          <div class="goal-header">
+            <div class="goal-icon" [style.background]="goal.color">
+              <i [class]="goal.icon"></i>
+            </div>
+            <div class="goal-status" [class.completed]="goal.completed" 
+                 [class.in-progress]="!goal.completed">
+              {{goal.completed ? 'Completed' : 'In Progress'}}
+            </div>
+          </div>
+          <div class="goal-content">
+            <h4>{{goal.title}}</h4>
+            <p>{{goal.description}}</p>
+            <div class="goal-progress">
+              <div class="progress-info">
+                <span class="progress-text">Progress: {{goal.progress}}%</span>
+                <span class="progress-deadline" *ngIf="!goal.completed">
+                  Due: {{goal.deadline}}
+                </span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width]="goal.progress + '%'"></div>
+              </div>
+            </div>
+          </div>
+          <div class="goal-actions">
+            <button class="btn btn-sm" [class.btn-outline]="!goal.completed" 
+                    (click)="updateGoalProgress(goal.id)">
+              {{goal.completed ? 'Completed' : 'Update Progress'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Insights Section -->
+  <section class="insights-section">
+    <div class="container">
+      <div class="insights-card">
+        <div class="insights-header">
+          <h2>Personal Insights</h2>
+          <i class="fas fa-lightbulb"></i>
+        </div>
+        <div class="insights-content">
+          <div class="insight-item" *ngFor="let insight of insights">
+            <div class="insight-icon" [style.background]="insight.color">
+              <i [class]="insight.icon"></i>
+            </div>
+            <div class="insight-text">
+              <h4>{{insight.title}}</h4>
+              <p>{{insight.description}}</p>
+              <span class="insight-meta">{{insight.metric}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" *ngIf="showExportModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Export Dashboard Data</h5>
+        <button type="button" class="btn-close" (click)="closeExportModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="export-options">
+          <div class="export-option" *ngFor="let option of exportOptions">
+            <input type="radio" [id]="option.id" name="exportFormat" [value]="option.value">
+            <label [for]="option.id">
+              <i [class]="option.icon"></i>
+              <span class="option-text">
+                <strong>{{option.format}}</strong>
+                <small>{{option.description}}</small>
+              </span>
+            </label>
+          </div>
+        </div>
+        <div class="export-period">
+          <label>Date Range:</label>
+          <select class="form-select">
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+            <option value="90d">Last 90 Days</option>
+            <option value="1y">Last Year</option>
+            <option value="custom">Custom Range</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeExportModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirmExport()">Export</button>
+      </div>
+    </div>
+  </div>
+</div>

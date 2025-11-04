@@ -1,0 +1,247 @@
+<!-- User Home Content -->
+<div class="user-home-container">
+  <!-- Welcome Section -->
+  <section class="welcome-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <div class="welcome-content">
+            <div class="user-greeting">
+              <span class="greeting-badge">👋 Welcome back!</span>
+              <h1 class="greeting-title">
+                Hello, <span class="user-name">{{userName}}</span>!
+              </h1>
+              <p class="greeting-subtitle">
+                Here's what's happening with your account today.
+              </p>
+            </div>
+            
+            <div class="quick-stats">
+              <div class="stat-card" *ngFor="let stat of quickStats">
+                <div class="stat-icon" [style.background]="stat.color">
+                  <i [class]="stat.icon"></i>
+                </div>
+                <div class="stat-info">
+                  <h3>{{stat.value}}</h3>
+                  <p>{{stat.label}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-6">
+          <div class="welcome-visual">
+            <div class="floating-card card-1">
+              <i class="fas fa-trophy"></i>
+              <span>Level {{userLevel}}</span>
+            </div>
+            <div class="floating-card card-2">
+              <i class="fas fa-star"></i>
+              <span>{{achievementCount}} Achievements</span>
+            </div>
+            <div class="user-progress">
+              <div class="progress-chart">
+                <div class="progress-circle">
+                  <div class="circle-bg"></div>
+                  <div class="circle-progress" [style.transform]="'rotate(' + (progress * 3.6) + 'deg)'"></div>
+                  <div class="progress-text">
+                    <span>{{progress}}%</span>
+                    <small>Profile Complete</small>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-complete" (click)="completeProfile()">
+                Complete Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions Section -->
+  <section class="quick-actions-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Quick Actions</h2>
+        <p>Frequently used features and shortcuts</p>
+      </div>
+      
+      <div class="row g-4">
+        <div class="col-md-3 col-sm-6" *ngFor="let action of quickActions">
+          <div class="action-card" (click)="navigateTo(action.route)" [style.background]="action.color">
+            <div class="action-icon">
+              <i [class]="action.icon"></i>
+            </div>
+            <h4>{{action.title}}</h4>
+            <p>{{action.description}}</p>
+            <div class="action-badge" *ngIf="action.notification">
+              <span>{{action.notification}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Activity Section -->
+  <section class="activity-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="activity-card">
+            <div class="card-header">
+              <h3>Recent Activity</h3>
+              <a href="#" class="view-all">View All</a>
+            </div>
+            <div class="activity-list">
+              <div class="activity-item" *ngFor="let activity of recentActivities">
+                <div class="activity-icon" [style.background]="activity.color">
+                  <i [class]="activity.icon"></i>
+                </div>
+                <div class="activity-content">
+                  <p class="activity-text">{{activity.text}}</p>
+                  <span class="activity-time">{{activity.time}}</span>
+                </div>
+                <div class="activity-badge" *ngIf="activity.badge">
+                  <span [class]="activity.badgeClass">{{activity.badge}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4">
+          <!-- Notifications Card -->
+          <div class="notifications-card">
+            <div class="card-header">
+              <h3>Notifications</h3>
+              <span class="notification-count">{{notifications.length}}</span>
+            </div>
+            <div class="notifications-list">
+              <div class="notification-item" *ngFor="let notification of notifications" 
+                   [class.unread]="!notification.read">
+                <div class="notification-icon">
+                  <i [class]="notification.icon"></i>
+                </div>
+                <div class="notification-content">
+                  <p>{{notification.message}}</p>
+                  <span>{{notification.time}}</span>
+                </div>
+                <button class="btn-close" (click)="dismissNotification(notification.id)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-sm btn-outline" (click)="markAllAsRead()">
+                Mark all as read
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features & Benefits Section -->
+  <section class="features-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2>Make the Most of Your Account</h2>
+        <p>Discover all the features available to enhance your experience</p>
+      </div>
+      
+      <div class="row g-4">
+        <div class="col-md-4" *ngFor="let feature of features">
+          <div class="feature-card">
+            <div class="feature-icon" [style.background]="feature.color">
+              <i [class]="feature.icon"></i>
+            </div>
+            <h4>{{feature.title}}</h4>
+            <p>{{feature.description}}</p>
+            <a [href]="feature.link" class="feature-link">
+              Learn more <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upcoming Events Section -->
+  <section class="events-section" *ngIf="upcomingEvents.length > 0">
+    <div class="container">
+      <div class="section-header">
+        <h2>Upcoming Events</h2>
+        <p>Don't miss these important dates and activities</p>
+      </div>
+      
+      <div class="events-grid">
+        <div class="event-card" *ngFor="let event of upcomingEvents">
+          <div class="event-date">
+            <span class="date-day">{{event.date | date:'dd'}}</span>
+            <span class="date-month">{{event.date | date:'MMM'}}</span>
+          </div>
+          <div class="event-content">
+            <h4>{{event.title}}</h4>
+            <p>{{event.description}}</p>
+            <div class="event-meta">
+              <span><i class="fas fa-clock"></i> {{event.time}}</span>
+              <span><i class="fas fa-map-marker-alt"></i> {{event.location}}</span>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" (click)="rsvpToEvent(event.id)">
+            {{event.rsvp ? 'Registered' : 'RSVP'}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Support Section -->
+  <section class="support-section">
+    <div class="container">
+      <div class="support-card">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h3>Need Help?</h3>
+            <p>Our support team is here to help you with any questions or issues you might have.</p>
+            <div class="support-options">
+              <button class="btn btn-light me-3" (click)="openHelpCenter()">
+                <i class="fas fa-life-ring me-2"></i>
+                Help Center
+              </button>
+              <button class="btn btn-outline-light" (click)="contactSupport()">
+                <i class="fas fa-headset me-2"></i>
+                Contact Support
+              </button>
+            </div>
+          </div>
+          <div class="col-lg-4 text-center">
+            <div class="support-illustration">
+              <i class="fas fa-headset"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Quick Settings Modal -->
+<div class="modal fade" id="quickSettingsModal" tabindex="-1" *ngIf="showQuickSettings">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Quick Settings</h5>
+        <button type="button" class="btn-close" (click)="closeQuickSettings()"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Settings content would go here -->
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,201 @@
+<nav class="navbar navbar-expand-lg admin-navbar" data-bs-theme="dark">
+  <div class="container">
+    <!-- Brand/Logo -->
+    <a class="navbar-brand" routerLink="/admin/home">
+      <div class="brand-wrapper">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">Admin Panel</span>
+      </div>
+    </a>
+
+    <!-- Mobile Toggle Button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#adminNavbarContent" aria-controls="adminNavbarContent" 
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Content -->
+    <div class="collapse navbar-collapse" id="adminNavbarContent">
+      <!-- Navigation Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/admin/adminHome" routerLinkActive="active">
+            <i class="nav-icon fas fa-cogs"></i>
+            Admin Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/admin/adminDashboard" routerLinkActive="active">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            Admin Dashboard
+          </a>
+        </li>
+        
+        <!-- Admin Dropdown Menu -->
+        <li class="nav-item dropdown" *ngIf="isLoggedIn">
+          <a class="nav-link dropdown-toggle" href="#" role="button" 
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="nav-icon fas fa-cog"></i>
+            Management
+          </a>
+          <ul class="dropdown-menu">
+            <li><h6 class="dropdown-header">User Management</h6></li>
+            <li><a class="dropdown-item" routerLink="/admin/users">
+              <i class="fas fa-users me-2"></i>Manage Users
+            </a></li>
+            <li><a class="dropdown-item" routerLink="/admin/roles">
+              <i class="fas fa-user-shield me-2"></i>Roles & Permissions
+            </a></li>
+            
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header">Content Management</h6></li>
+            <li><a class="dropdown-item" routerLink="/admin/posts">
+              <i class="fas fa-newspaper me-2"></i>Manage Posts
+            </a></li>
+            <li><a class="dropdown-item" routerLink="/admin/categories">
+              <i class="fas fa-folder me-2"></i>Categories
+            </a></li>
+            
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header">System</h6></li>
+            <li><a class="dropdown-item" routerLink="/admin/settings">
+              <i class="fas fa-sliders-h me-2"></i>System Settings
+            </a></li>
+            <li><a class="dropdown-item" routerLink="/admin/logs">
+              <i class="fas fa-clipboard-list me-2"></i>Activity Logs
+            </a></li>
+          </ul>
+        </li>
+
+        <!-- Quick Actions -->
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a class="nav-link" routerLink="/admin/analytics">
+            <i class="nav-icon fas fa-chart-bar"></i>
+            Analytics
+          </a>
+        </li>
+      </ul>
+
+      <!-- Admin Auth Section -->
+      <div class="d-flex align-items-center">
+        <!-- Admin Quick Tools -->
+        <div class="admin-tools me-3" *ngIf="isLoggedIn">
+          <button class="btn btn-sm btn-warning me-2" (click)="clearCache()" title="Clear Cache">
+            <i class="fas fa-broom"></i>
+          </button>
+          <button class="btn btn-sm btn-info me-2" (click)="refreshData()" title="Refresh Data">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+          <button class="btn btn-sm btn-light" (click)="showSystemInfo()" title="System Info">
+            <i class="fas fa-info-circle"></i>
+          </button>
+        </div>
+
+        <!-- Admin Search -->
+        <div class="search-wrapper me-3" *ngIf="isLoggedIn">
+          <input class="form-control search-input" type="search" 
+                 placeholder="Search admin panel..." aria-label="Search"
+                 (keyup)="onAdminSearch($event)">
+          <i class="search-icon fas fa-search"></i>
+        </div>
+        
+        <!-- Admin Auth Buttons / Profile -->
+        <div class="admin-auth-section" *ngIf="!isLoggedIn; else adminProfile">
+          <a class="btn btn-outline-light me-2" routerLink="/admin/login">
+            <i class="fas fa-sign-in-alt me-2"></i>
+            Admin Login
+          </a>
+          <a class="btn btn-danger" routerLink="/admin/setup" *ngIf="!isLoggedIn">
+            <i class="fas fa-shield-alt me-2"></i>
+            Setup
+          </a>
+        </div>
+
+        <ng-template #adminProfile>
+          <div class="admin-profile">
+            <div class="admin-info">
+              <span class="admin-name">{{adminName}}</span>
+              <span class="admin-role">{{adminRole}}</span>
+            </div>
+            <div class="admin-avatar dropdown">
+              <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                <img [src]="adminAvatar" [alt]="adminName" class="avatar-img">
+                <span class="status-indicator" [class.online]="isOnline"></span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" routerLink="/admin/profile">
+                  <i class="fas fa-user-cog me-2"></i>Admin Profile
+                </a></li>
+                <li><a class="dropdown-item" routerLink="/admin/security">
+                  <i class="fas fa-lock me-2"></i>Security
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" (click)="impersonateUser()">
+                  <i class="fas fa-user-secret me-2"></i>Impersonate User
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" (click)="logout()">
+                  <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a></li>
+              </ul>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Admin Status Bar -->
+<div class="admin-status-bar" *ngIf="isLoggedIn">
+  <div class="container">
+    <div class="status-content">
+      <span class="status-item">
+        <i class="fas fa-server"></i>
+        System: <strong [class.text-success]="systemStatus === 'Online'" 
+                        [class.text-warning]="systemStatus === 'Maintenance'"
+                        [class.text-danger]="systemStatus === 'Offline'">
+          {{systemStatus}}
+        </strong>
+      </span>
+      <span class="status-item">
+        <i class="fas fa-database"></i>
+        Users Online: <strong>{{usersOnline}}</strong>
+      </span>
+      <span class="status-item">
+        <i class="fas fa-shield-alt"></i>
+        Security: <strong [class.text-success]="securityLevel === 'High'" 
+                         [class.text-warning]="securityLevel === 'Medium'">
+          {{securityLevel}}
+        </strong>
+      </span>
+      <span class="status-item">
+        <i class="fas fa-bell"></i>
+        Alerts: <strong [class.text-danger]="alertCount > 0">{{alertCount}}</strong>
+      </span>
+      <span class="status-item">
+        <i class="fas fa-clock"></i>
+        Last Backup: {{lastBackup}}
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Stats Bar -->
+<div class="quick-stats-bar" *ngIf="isLoggedIn">
+  <div class="container">
+    <div class="stats-content">
+      <div class="stat-item" *ngFor="let stat of quickStats">
+        <span class="stat-label">{{stat.label}}</span>
+        <span class="stat-value" [class.text-success]="stat.trend === 'up'"
+                                [class.text-danger]="stat.trend === 'down'">
+          {{stat.value}}
+          <i class="fas" [class.fa-arrow-up]="stat.trend === 'up'" 
+                        [class.fa-arrow-down]="stat.trend === 'down'"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

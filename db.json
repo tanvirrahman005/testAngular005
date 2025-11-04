@@ -1,0 +1,39 @@
+{
+  "products": [
+    {
+      "name": "Gaming Mouse",
+      "price": 1499,
+      "category": "Accessories",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTM2CPkxCBikLjRBvoSQnnUV-o5ZdU29DGKBA&s",
+      "id": "1"
+    },
+    {
+      "name": "Mechanical Keyboard",
+      "price": 4999,
+      "category": "Accessories",
+      "image": "https://m.media-amazon.com/images/I/71+p3Hx03dL._AC_SL1500_.jpg",
+      "id": "2"
+    },
+    {
+      "name": "Ultra HD Monitor",
+      "price": 15999,
+      "category": "Display",
+      "image": "https://5.imimg.com/data5/SELLER/Default/2021/1/WM/DX/NA/77918833/acer-21-5-inch-full-hd-ips-panel-monitor.jpg",
+      "id": "3"
+    },
+    {
+      "name": "Digital Electronics",
+      "price": 15000,
+      "category": "Accessories",
+      "image": "https://eee.zhsust.ac.bd/wp-content/uploads/2022/09/Digital-Electronics.jpg",
+      "id": "cd44"
+    },
+    {
+      "id": "82c7",
+      "name": "thrf",
+      "price": 574,
+      "category": "fg",
+      "image": ""
+    }
+  ]
+}

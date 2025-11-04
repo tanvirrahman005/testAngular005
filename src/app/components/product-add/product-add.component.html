@@ -1,0 +1,27 @@
+<div class="card mt-4 p-3 shadow-sm">
+      <h4>➕ Add Product</h4>
+      <form [formGroup]="product" (ngSubmit)="save()">
+        <div class="mb-3">
+          <label>Name</label>
+          <input type="text" formControlName="name" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label>Price</label>
+          <input type="number" formControlName="price" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label>Category</label>
+          <input type="text" formControlName="category" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label>Image</label>
+          <input type="text" formControlName="image" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label>Image view</label>
+            <img [src]="product.value.image" alt="" height="200px" width = "300px">
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a routerLink="/productList"><button type="button" class="btn btn-success">Product List</button></a>
+      </form>
+    </div>

@@ -1,0 +1,109 @@
+<nav class="navbar navbar-expand-lg user-navbar" data-bs-theme="dark">
+  <div class="container">
+    <!-- Brand/Logo -->
+    <a class="navbar-brand" routerLink="/user/home">
+      <div class="brand-wrapper">
+        <span class="brand-icon">👤</span>
+        <span class="brand-text">User Portal</span>
+      </div>
+    </a>
+
+    <!-- Mobile Toggle Button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#userNavbarContent" aria-controls="userNavbarContent" 
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Content -->
+    <div class="collapse navbar-collapse" id="userNavbarContent">
+      <!-- Navigation Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/user/userHome" routerLinkActive="active">
+            <i class="nav-icon fas fa-user-circle"></i>
+            User Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/user/userDashboard" routerLinkActive="active">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            User Dashboard
+          </a>
+        </li>
+        <li class="nav-item dropdown" *ngIf="isLoggedIn">
+          <a class="nav-link dropdown-toggle" href="#" role="button" 
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="nav-icon fas fa-user"></i>
+            My Account
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" routerLink="/user/profile">
+              <i class="fas fa-user-edit me-2"></i>Profile
+            </a></li>
+            <li><a class="dropdown-item" routerLink="/user/settings">
+              <i class="fas fa-cog me-2"></i>Settings
+            </a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" (click)="logout()">
+              <i class="fas fa-sign-out-alt me-2"></i>Logout
+            </a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- User Auth Section -->
+      <div class="d-flex align-items-center">
+        <div class="search-wrapper me-3" *ngIf="isLoggedIn">
+          <input class="form-control search-input" type="search" 
+                 placeholder="Search user portal..." aria-label="Search">
+          <i class="search-icon fas fa-search"></i>
+        </div>
+        
+        <div class="user-auth-section" *ngIf="!isLoggedIn; else userProfile">
+          <a class="btn btn-outline-light me-2" routerLink="/user/login">
+            <i class="fas fa-sign-in-alt me-2"></i>
+            User Login
+          </a>
+          <a class="btn btn-primary" routerLink="/user/register">
+            <i class="fas fa-user-plus me-2"></i>
+            Register
+          </a>
+        </div>
+
+        <ng-template #userProfile>
+          <div class="user-profile">
+            <div class="user-info">
+              <span class="user-name">Welcome, {{userName}}</span>
+              <span class="user-role">{{userRole}}</span>
+            </div>
+            <div class="user-avatar">
+              <img [src]="userAvatar" [alt]="userName" class="avatar-img">
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- User Status Bar -->
+<div class="user-status-bar" *ngIf="isLoggedIn">
+  <div class="container">
+    <div class="status-content">
+      <span class="status-item">
+        <i class="fas fa-shield-alt"></i>
+        Secure Session
+      </span>
+      <span class="status-item">
+        <i class="fas fa-clock"></i>
+        Last login: {{lastLogin}}
+      </span>
+      <span class="status-item">
+        <i class="fas fa-bell"></i>
+        Notifications ({{notificationCount}})
+      </span>
+    </div>
+  </div>
+</div>

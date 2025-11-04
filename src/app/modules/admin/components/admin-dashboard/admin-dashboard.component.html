@@ -1,0 +1,494 @@
+
+<!-- Admin Dashboard Content -->
+<div class="admin-dashboard-container">
+  <!-- Dashboard Header -->
+  <section class="dashboard-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Admin Dashboard</h1>
+          <p>Comprehensive overview of system performance, user activity, and business metrics</p>
+        </div>
+        <div class="header-actions">
+          <div class="date-range">
+            <select class="form-select" [(ngModel)]="selectedRange" (change)="onRangeChange()">
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="7d">Last 7 Days</option>
+              <option value="30d" selected>Last 30 Days</option>
+              <option value="90d">Last 90 Days</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" (click)="refreshDashboard()">
+            <i class="fas fa-sync-alt me-2"></i>
+            Refresh Data
+          </button>
+          <button class="btn btn-outline" (click)="exportDashboard()">
+            <i class="fas fa-download me-2"></i>
+            Export
+          </button>
+        </div>
+      </div>
+      
+      <!-- Real-time Stats -->
+      <div class="real-time-stats">
+        <div class="stat-item">
+          <i class="fas fa-users"></i>
+          <div class="stat-info">
+            <span class="stat-value">{{realTimeStats.activeUsers}}</span>
+            <span class="stat-label">Active Users</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-shopping-cart"></i>
+          <div class="stat-info">
+            <span class="stat-value">{{realTimeStats.orders}}</span>
+            <span class="stat-label">Orders/Min</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-bolt"></i>
+          <div class="stat-info">
+            <span class="stat-value">{{realTimeStats.responseTime}}ms</span>
+            <span class="stat-label">Avg Response</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-server"></i>
+          <div class="stat-info">
+            <span class="stat-value">{{realTimeStats.serverLoad}}%</span>
+            <span class="stat-label">Server Load</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPI Metrics Grid -->
+  <section class="kpi-section">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-xl-3 col-md-6" *ngFor="let kpi of kpiMetrics">
+          <div class="kpi-card" [class.highlight]="kpi.highlight">
+            <div class="kpi-header">
+              <div class="kpi-icon" [style.background]="kpi.color">
+                <i [class]="kpi.icon"></i>
+              </div>
+              <div class="kpi-trend" [class.positive]="kpi.trend > 0" 
+                   [class.negative]="kpi.trend < 0">
+                <i class="fas" [class.fa-arrow-up]="kpi.trend > 0" 
+                   [class.fa-arrow-down]="kpi.trend < 0"></i>
+                {{Math.abs(kpi.trend)}}%
+              </div>
+            </div>
+            <div class="kpi-content">
+              <h3>{{kpi.value}}</h3>
+              <p>{{kpi.title}}</p>
+              <div class="kpi-comparison">
+                vs previous period: 
+                <span [class.text-success]="kpi.trend > 0" 
+                      [class.text-danger]="kpi.trend < 0">
+                  {{kpi.trend > 0 ? '+' : ''}}{{kpi.trend}}%
+                </span>
+              </div>
+            </div>
+            <div class="kpi-sparkline">
+              <canvas [id]="'sparkline-' + kpi.id"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Analytics Dashboard -->
+  <section class="analytics-section">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Revenue & Sales Chart -->
+        <div class="col-lg-8">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Revenue & Sales Analytics</h3>
+              <div class="chart-filters">
+                <select class="form-select form-select-sm" [(ngModel)]="revenueMetric" (change)="updateRevenueChart()">
+                  <option value="revenue">Revenue</option>
+                  <option value="orders">Orders</option>
+                  <option value="customers">Customers</option>
+                </select>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="revenueChart">{{ revenueChart }}</canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="col-lg-4">
+          <div class="metrics-sidebar">
+            <!-- System Health -->
+            <div class="metric-widget">
+              <div class="widget-header">
+                <h4>System Health</h4>
+                <div class="health-score" [class]="getHealthScoreClass()">
+                  {{systemHealth.score}}%
+                </div>
+              </div>
+              <div class="health-metrics">
+                <div class="health-metric" *ngFor="let metric of systemHealth.metrics">
+                  <span class="metric-label">{{metric.label}}</span>
+                  <div class="metric-bar">
+                    <div class="bar-fill" [style.width]="metric.value + '%'" 
+                         [class]="getBarClass(metric.value)"></div>
+                  </div>
+                  <span class="metric-value">{{metric.value}}%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Alerts -->
+            <div class="alerts-widget">
+              <div class="widget-header">
+                <h4>Quick Alerts</h4>
+                <span class="alert-count">{{quickAlerts.length}}</span>
+              </div>
+              <div class="alerts-list">
+                <div class="alert-item" *ngFor="let alert of quickAlerts" [class]="alert.level">
+                  <div class="alert-icon">
+                    <i [class]="alert.icon"></i>
+                  </div>
+                  <div class="alert-content">
+                    <p class="alert-message">{{alert.message}}</p>
+                    <span class="alert-time">{{alert.time}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary Charts Row -->
+      <div class="row g-4 mt-4">
+        <!-- User Acquisition -->
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>User Acquisition</h3>
+              <div class="chart-legend">
+                <div class="legend-item" *ngFor="let item of acquisitionLegend">
+                  <span class="legend-color" [style.background]="item.color"></span>
+                  {{item.label}}
+                </div>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="acquisitionChart">{{ acquisitionChart }}</canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Geographic Distribution -->
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Geographic Distribution</h3>
+              <div class="map-legend">
+                <span>Top Regions</span>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="geoChart">{{ geoChart }}</canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Grids Section -->
+  <section class="data-grids-section">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Recent Transactions -->
+        <div class="col-lg-6">
+          <div class="data-card">
+            <div class="card-header">
+              <h3>Recent Transactions</h3>
+              <a href="#" class="view-all">View All</a>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let transaction of recentTransactions">
+                    <td>
+                      <div class="user-cell">
+                        <img [src]="transaction.avatar" [alt]="transaction.user" class="user-avatar">
+                        <div class="user-info">
+                          <span class="user-name">{{transaction.user}}</span>
+                          <span class="user-email">{{transaction.email}}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="amount">{{transaction.amount}}</td>
+                    <td>
+                      <span class="status-badge" [class]="transaction.status">
+                        {{transaction.status}}
+                      </span>
+                    </td>
+                    <td class="date">{{transaction.date}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Performance -->
+        <div class="col-lg-6">
+          <div class="data-card">
+            <div class="card-header">
+              <h3>Performance Metrics</h3>
+              <div class="metric-toggle">
+                <button class="btn btn-sm" [class.active]="performanceView === 'system'" 
+                        (click)="performanceView = 'system'">System</button>
+                <button class="btn btn-sm" [class.active]="performanceView === 'application'" 
+                        (click)="performanceView = 'application'">Application</button>
+              </div>
+            </div>
+            <div class="performance-metrics">
+              <div class="performance-item" *ngFor="let metric of performanceMetrics">
+                <div class="metric-info">
+                  <span class="metric-name">{{metric.name}}</span>
+                  <span class="metric-value">{{metric.value}}</span>
+                </div>
+                <div class="metric-bar">
+                  <div class="bar-fill" [style.width]="metric.percentage + '%'" 
+                       [class]="getPerformanceClass(metric.percentage)"></div>
+                </div>
+                <div class="metric-trend" [class]="metric.trend">
+                  <i class="fas" [class.fa-arrow-up]="metric.trend === 'up'" 
+                     [class.fa-arrow-down]="metric.trend === 'down'"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Advanced Monitoring -->
+  <section class="monitoring-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Advanced System Monitoring</h2>
+        <p>Real-time monitoring of critical system components and services</p>
+      </div>
+      
+      <div class="monitoring-grid">
+        <div class="monitor-card" *ngFor="let monitor of systemMonitors">
+          <div class="monitor-header">
+            <div class="monitor-icon" [style.background]="monitor.color">
+              <i [class]="monitor.icon"></i>
+            </div>
+            <div class="monitor-status" [class]="monitor.status">
+              <span class="status-dot"></span>
+              {{monitor.status}}
+            </div>
+          </div>
+          <div class="monitor-content">
+            <h4>{{monitor.title}}</h4>
+            <p>{{monitor.description}}</p>
+            <div class="monitor-stats">
+              <div class="stat" *ngFor="let stat of monitor.stats">
+                <span class="stat-value">{{stat.value}}</span>
+                <span class="stat-label">{{stat.label}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="monitor-actions">
+            <button class="btn btn-sm" [class]="monitor.status === 'critical' ? 'btn-danger' : 'btn-outline'" 
+                    (click)="handleMonitorAction(monitor.id)">
+              {{monitor.status === 'critical' ? 'Fix Issue' : 'View Details'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Insights & Recommendations -->
+  <section class="insights-section">
+    <div class="container">
+      <div class="insights-card">
+        <div class="insights-header">
+          <h2>AI Insights & Recommendations</h2>
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="insights-content">
+          <div class="insight-item" *ngFor="let insight of aiInsights" [class]="insight.priority">
+            <div class="insight-icon">
+              <i [class]="insight.icon"></i>
+            </div>
+            <div class="insight-text">
+              <h4>{{insight.title}}</h4>
+              <p>{{insight.description}}</p>
+              <div class="insight-actions">
+                <button class="btn btn-sm btn-primary" (click)="applyInsight(insight.id)">
+                  {{insight.action}}
+                </button>
+                <button class="btn btn-sm btn-outline" (click)="dismissInsight(insight.id)">
+                  Dismiss
+                </button>
+              </div>
+            </div>
+            <div class="insight-priority" [class]="insight.priority">
+              {{insight.priority}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions Panel -->
+  <section class="actions-section">
+    <div class="container">
+      <div class="actions-panel">
+        <h3>Quick Administrative Actions</h3>
+        <div class="actions-grid">
+          <button class="action-btn" (click)="runBackup()">
+            <i class="fas fa-database"></i>
+            <span>Backup Database</span>
+          </button>
+          <button class="action-btn" (click)="clearCache()">
+            <i class="fas fa-broom"></i>
+            <span>Clear Cache</span>
+          </button>
+          <button class="action-btn" (click)="runSecurityScan()">
+            <i class="fas fa-shield-alt"></i>
+            <span>Security Scan</span>
+          </button>
+          <button class="action-btn" (click)="generateReports()">
+            <i class="fas fa-chart-bar"></i>
+            <span>Generate Reports</span>
+          </button>
+          <button class="action-btn" (click)="systemUpdate()">
+            <i class="fas fa-sync-alt"></i>
+            <span>System Update</span>
+          </button>
+          <button class="action-btn" (click)="userManagement()">
+            <i class="fas fa-users-cog"></i>
+            <span>User Management</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" *ngIf="showExportModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Export Dashboard Data</h5>
+        <button type="button" class="btn-close" (click)="closeExportModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="export-options">
+          <div class="export-option" *ngFor="let option of exportOptions">
+            <input type="radio" [id]="option.id" name="exportFormat" [value]="option.value" [checked]="option.default">
+            <label [for]="option.id">
+              <i [class]="option.icon"></i>
+              <span class="option-text">
+                <strong>{{option.format}}</strong>
+                <small>{{option.description}}</small>
+              </span>
+            </label>
+          </div>
+        </div>
+        <div class="export-settings">
+          <div class="setting-group">
+            <label>Date Range:</label>
+            <select class="form-select" [(ngModel)]="exportRange">
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last 30 Days</option>
+              <option value="90d">Last 90 Days</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          <div class="setting-group">
+            <label>Include:</label>
+            <div class="checkbox-group">
+              <label *ngFor="let include of exportIncludes">
+                <input type="checkbox" [checked]="include.checked">
+                {{include.label}}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeExportModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirmExport()">
+          <i class="fas fa-download me-2"></i>
+          Export Data
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- System Update Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" *ngIf="showUpdateModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">System Update Available</h5>
+        <button type="button" class="btn-close" (click)="closeUpdateModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="update-info">
+          <div class="update-version">
+            <i class="fas fa-rocket"></i>
+            <div class="version-details">
+              <strong>v2.5.0</strong>
+              <span>Latest Stable Release</span>
+            </div>
+          </div>
+          <div class="update-features">
+            <h6>New Features:</h6>
+            <ul>
+              <li>Enhanced security protocols</li>
+              <li>Improved performance monitoring</li>
+              <li>New analytics dashboard</li>
+              <li>Advanced user management</li>
+            </ul>
+          </div>
+          <div class="update-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Recommended to backup before updating</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeUpdateModal()">Later</button>
+        <button type="button" class="btn btn-primary" (click)="startUpdate()">
+          <i class="fas fa-download me-2"></i>
+          Update Now
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,429 @@
+
+<!-- Admin Home Content -->
+<div class="admin-home-container">
+  <!-- Welcome & System Status -->
+  <section class="welcome-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <div class="welcome-content">
+            <div class="admin-greeting">
+              <span class="greeting-badge">👋 Welcome back, Admin!</span>
+              <h1 class="greeting-title">
+                System 
+                <span class="status-online">Overview</span>
+              </h1>
+              <p class="greeting-subtitle">
+                Monitor your platform's performance and manage system operations efficiently.
+              </p>
+            </div>
+            
+            <div class="system-health">
+              <div class="health-indicator">
+                <div class="health-status">
+                  <span class="status-dot online"></span>
+                  <span class="status-text">All Systems Operational</span>
+                </div>
+                <div class="health-metrics">
+                  <span class="metric">Uptime: 99.98%</span>
+                  <span class="metric">Response: 124ms</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-6">
+          <div class="system-visual">
+            <div class="server-cluster">
+              <div class="server-node primary" [class.active]="true">
+                <i class="fas fa-server"></i>
+                <span>Web Server</span>
+              </div>
+              <div class="server-node secondary" [class.active]="true">
+                <i class="fas fa-database"></i>
+                <span>Database</span>
+              </div>
+              <div class="server-node tertiary" [class.active]="true">
+                <i class="fas fa-cloud"></i>
+                <span>CDN</span>
+              </div>
+            </div>
+            <div class="system-actions">
+              <button class="btn btn-success btn-sm" (click)="runSystemCheck()">
+                <i class="fas fa-sync-alt me-2"></i>
+                Run System Check
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key System Metrics -->
+  <section class="metrics-section">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-xl-2 col-md-4 col-sm-6" *ngFor="let metric of systemMetrics">
+          <div class="metric-card" [class.critical]="metric.critical">
+            <div class="metric-icon" [style.background]="metric.color">
+              <i [class]="metric.icon"></i>
+            </div>
+            <div class="metric-content">
+              <h3 [class.text-danger]="metric.critical">{{metric.value}}</h3>
+              <p>{{metric.title}}</p>
+              <div class="metric-trend" [class.positive]="metric.trend > 0" 
+                   [class.negative]="metric.trend < 0">
+                <i class="fas" [class.fa-arrow-up]="metric.trend > 0" 
+                   [class.fa-arrow-down]="metric.trend < 0"></i>
+                {{Math.abs(metric.trend)}}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts & Analytics -->
+  <section class="analytics-section">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Traffic Analytics -->
+        <div class="col-lg-8">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Platform Traffic Analytics</h3>
+              <div class="chart-controls">
+                <select class="form-select form-select-sm" [(ngModel)]="trafficPeriod" (change)="updateTrafficChart()">
+                  <option value="7d">Last 7 Days</option>
+                  <option value="30d">Last 30 Days</option>
+                  <option value="90d">Last 90 Days</option>
+                </select>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="trafficChart">{{ trafficChart }}</canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Distribution -->
+        <div class="col-lg-4">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>User Distribution</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="userDistributionChart">{{ userDistributionChart }}</canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Charts -->
+      <div class="row g-4 mt-4">
+        <!-- Revenue Chart -->
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Revenue Analytics</h3>
+              <div class="revenue-stats">
+                <span class="revenue-amount">${{revenueStats.current | number}}</span>
+                <span class="revenue-change" [class.positive]="revenueStats.change > 0">
+                  {{revenueStats.change > 0 ? '+' : ''}}{{revenueStats.change}}%
+                </span>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="revenueChart">{{ revenueChart }}</canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Performance -->
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>System Performance</h3>
+              <div class="performance-indicator">
+                <span class="performance-score">{{performanceScore}}%</span>
+                <span class="performance-label">Optimal</span>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="performanceChart">{{ performanceChart }}</canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Management -->
+  <section class="management-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Quick Management</h2>
+        <p>Access frequently used administrative tools and functions</p>
+      </div>
+      
+      <div class="row g-4">
+        <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let tool of managementTools">
+          <div class="tool-card" (click)="navigateTo(tool.route)" [style.background]="tool.color">
+            <div class="tool-icon">
+              <i [class]="tool.icon"></i>
+            </div>
+            <div class="tool-content">
+              <h4>{{tool.title}}</h4>
+              <p>{{tool.description}}</p>
+              <div class="tool-stats" *ngIf="tool.stats">
+                <span class="stat-value">{{tool.stats.value}}</span>
+                <span class="stat-label">{{tool.stats.label}}</span>
+              </div>
+            </div>
+            <div class="tool-badge" *ngIf="tool.notification">
+              <span>{{tool.notification}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Activity & Alerts -->
+  <section class="activity-alerts-section">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Recent Activity -->
+        <div class="col-lg-8">
+          <div class="activity-card">
+            <div class="card-header">
+              <h3>Recent System Activity</h3>
+              <a href="#" class="view-all">View All Logs</a>
+            </div>
+            <div class="activity-list">
+              <div class="activity-item" *ngFor="let activity of systemActivity">
+                <div class="activity-icon" [class]="activity.type">
+                  <i [class]="activity.icon"></i>
+                </div>
+                <div class="activity-content">
+                  <p class="activity-text">{{activity.text}}</p>
+                  <div class="activity-meta">
+                    <span class="activity-time">{{activity.time}}</span>
+                    <span class="activity-user">{{activity.user}}</span>
+                    <span class="activity-ip">{{activity.ip}}</span>
+                  </div>
+                </div>
+                <div class="activity-severity" [class]="activity.severity">
+                  {{activity.severity}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Alerts -->
+        <div class="col-lg-4">
+          <div class="alerts-sidebar">
+            <!-- Active Alerts -->
+            <div class="alerts-card">
+              <div class="card-header">
+                <h4>Active Alerts</h4>
+                <span class="alert-count">{{activeAlerts.length}}</span>
+              </div>
+              <div class="alerts-list">
+                <div class="alert-item" *ngFor="let alert of activeAlerts" [class]="alert.level">
+                  <div class="alert-icon">
+                    <i [class]="alert.icon"></i>
+                  </div>
+                  <div class="alert-content">
+                    <p class="alert-text">{{alert.message}}</p>
+                    <span class="alert-time">{{alert.time}}</span>
+                  </div>
+                  <button class="btn-resolve" (click)="resolveAlert(alert.id)">
+                    <i class="fas fa-check"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats-card">
+              <div class="card-header">
+                <h4>System Stats</h4>
+                <i class="fas fa-chart-bar"></i>
+              </div>
+              <div class="stats-content">
+                <div class="stat-item" *ngFor="let stat of quickStats">
+                  <span class="stat-label">{{stat.label}}</span>
+                  <span class="stat-value" [class]="stat.trend">
+                    {{stat.value}}
+                    <i class="fas" [class.fa-arrow-up]="stat.trend === 'up'" 
+                       [class.fa-arrow-down]="stat.trend === 'down'"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Maintenance Tasks -->
+            <div class="tasks-card">
+              <div class="card-header">
+                <h4>Maintenance Tasks</h4>
+                <i class="fas fa-tools"></i>
+              </div>
+              <div class="tasks-list">
+                <div class="task-item" *ngFor="let task of maintenanceTasks">
+                  <div class="task-info">
+                    <span class="task-name">{{task.name}}</span>
+                    <span class="task-schedule">{{task.schedule}}</span>
+                  </div>
+                  <div class="task-status" [class]="task.status">
+                    <span>{{task.status}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-sm btn-outline" (click)="runMaintenance()">
+                  Run Maintenance
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- User Management Preview -->
+  <section class="users-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Recent User Activity</h2>
+        <p>Monitor recent user registrations and activities</p>
+      </div>
+      
+      <div class="users-card">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Last Activity</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of recentUsers">
+                <td>
+                  <div class="user-info">
+                    <img [src]="user.avatar" [alt]="user.name" class="user-avatar">
+                    <div class="user-details">
+                      <span class="user-name">{{user.name}}</span>
+                      <span class="user-role">{{user.role}}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>{{user.email}}</td>
+                <td>
+                  <span class="status-badge" [class]="user.status">
+                    {{user.status}}
+                  </span>
+                </td>
+                <td>{{user.lastActivity}}</td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn btn-sm btn-outline" (click)="viewUser(user.id)">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline" (click)="editUser(user.id)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer">
+          <a routerLink="/admin/users" class="btn btn-primary">
+            View All Users
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- System Information -->
+  <section class="system-info-section">
+    <div class="container">
+      <div class="system-info-card">
+        <div class="row">
+          <div class="col-lg-6">
+            <h3>System Information</h3>
+            <div class="info-grid">
+              <div class="info-item" *ngFor="let info of systemInfo">
+                <span class="info-label">{{info.label}}:</span>
+                <span class="info-value" [class]="info.status">{{info.value}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <h3>Quick Actions</h3>
+            <div class="quick-actions-grid">
+              <button class="action-btn" (click)="backupSystem()">
+                <i class="fas fa-database"></i>
+                <span>Backup System</span>
+              </button>
+              <button class="action-btn" (click)="clearCache()">
+                <i class="fas fa-broom"></i>
+                <span>Clear Cache</span>
+              </button>
+              <button class="action-btn" (click)="viewLogs()">
+                <i class="fas fa-file-alt"></i>
+                <span>View Logs</span>
+              </button>
+              <button class="action-btn" (click)="systemSettings()">
+                <i class="fas fa-cogs"></i>
+                <span>System Settings</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- System Check Modal -->
+<div class="modal fade" id="systemCheckModal" tabindex="-1" *ngIf="showSystemCheckModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-server me-2"></i>
+          System Health Check
+        </h5>
+        <button type="button" class="btn-close" (click)="closeSystemCheckModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="check-list">
+          <div class="check-item" *ngFor="let check of systemChecks" [class]="check.status">
+            <i class="fas" [class.fa-check-circle]="check.status === 'passed'" 
+               [class.fa-times-circle]="check.status === 'failed'" 
+               [class.fa-spinner]="check.status === 'running'"></i>
+            <span class="check-name">{{check.name}}</span>
+            <span class="check-status">{{check.status}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeSystemCheckModal()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="runDetailedCheck()">Run Detailed Check</button>
+      </div>
+    </div>
+  </div>
+</div>
